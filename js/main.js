@@ -11,7 +11,6 @@ import { CHAPTERS } from './chapters.js';
 const app = document.getElementById('app');
 const hotspotLayer = document.getElementById('hotspotLayer');
 const navLayer = document.getElementById('navLayer');
-const timelineContainer = document.getElementById('timelineContainer');
 const nodeLabel = document.getElementById('nodeLabel');
 
 const renderer = new THREE.WebGLRenderer({
@@ -34,11 +33,10 @@ const hotspotSystem = new HotspotSystem(navLayer, camera, (data) => {
   controller.goToChapter(data.to);
 });
 
-const timelineScrubber = new TimelineScrubber({
-  container: timelineContainer,
-  onSeek: (time) => controller.seek(time),
-  onEndReached: () => {}
-});
+// Simple loading state (no timeline UI)
+let isLoading = false;
+function showLoading() { isLoading = true; }
+function hideLoading() { isLoading = false; }
 
 const hotspotTimeline = new HotspotTimeline({ layer: hotspotLayer, camera });
 
@@ -48,20 +46,15 @@ const controller = new VideoChapterController({
   rig,
   hotspotSystem,
   hotspotTimeline,
-  timelineScrubber,
+  timelineScrubber: { update: () => {}, setChapter: () => {}, setLoadingProgress: () => {}, showLoading, hideLoading, setEndReached: () => {}, setComplete: () => {} },
   onChapterChange: (chapter, index) => {
     nodeLabel.textContent = chapter.name;
   },
   onComplete: () => {
-    // Experience complete - loop to chapter 1
     controller.goToChapter(0);
   },
-  onLoadingChange: (isLoading) => {
-    if (isLoading) {
-      timelineScrubber.showLoading();
-    } else {
-      timelineScrubber.hideLoading();
-    }
+  onLoadingChange: (loading) => {
+    if (loading) showLoading(); else hideLoading();
   }
 });
 
@@ -75,6 +68,9 @@ window.addEventListener('hotspot:open', (e) => {
 });
 document.getElementById('panelClose').addEventListener('click', () => panel.classList.remove('open'));
 
+// Recenter button
+document.getElementById('recenterBtn').addEventListener('click', () => rig.recenter());
+
 // Auto-enable gyro on all devices
 async function enableGyro() {
   try {
@@ -86,9 +82,9 @@ async function enableGyro() {
 
 // Auto-start experience
 async function startExperience() {
-  timelineScrubber.showLoading();
+  showLoading();
   await controller.loadChapter(0);
-  timelineScrubber.hideLoading();
+  hideLoading();
   await controller.playCurrent();
   controller.loadChapter(1, true).catch(() => {});
 }
