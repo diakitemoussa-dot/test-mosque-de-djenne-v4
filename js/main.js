@@ -12,10 +12,6 @@ const app = document.getElementById('app');
 const hotspotLayer = document.getElementById('hotspotLayer');
 const navLayer = document.getElementById('navLayer');
 const timelineContainer = document.getElementById('timelineContainer');
-const motionPrompt = document.getElementById('motionPrompt');
-const startOverlay = document.getElementById('startOverlay');
-const endScreen = document.getElementById('endScreen');
-const restartBtn = document.getElementById('restartBtn');
 const nodeLabel = document.getElementById('nodeLabel');
 
 const renderer = new THREE.WebGLRenderer({
@@ -57,7 +53,8 @@ const controller = new VideoChapterController({
     nodeLabel.textContent = chapter.name;
   },
   onComplete: () => {
-    endScreen.classList.remove('hidden');
+    // Experience complete - loop to chapter 1
+    controller.goToChapter(0);
   },
   onLoadingChange: (isLoading) => {
     if (isLoading) {
@@ -66,13 +63,6 @@ const controller = new VideoChapterController({
       timelineScrubber.hideLoading();
     }
   }
-});
-
-document.getElementById('recenterBtn').addEventListener('click', () => rig.recenter());
-
-restartBtn.addEventListener('click', () => {
-  endScreen.classList.add('hidden');
-  controller.goToChapter(0);
 });
 
 const panel = document.getElementById('hotspotPanel');
@@ -85,34 +75,26 @@ window.addEventListener('hotspot:open', (e) => {
 });
 document.getElementById('panelClose').addEventListener('click', () => panel.classList.remove('open'));
 
-const needsPermission =
-  typeof DeviceOrientationEvent !== 'undefined' &&
-  typeof DeviceOrientationEvent.requestPermission === 'function';
-
-if (needsPermission) {
-  motionPrompt.hidden = false;
-  motionPrompt.addEventListener('click', async () => {
+// Auto-enable gyro on all devices
+async function enableGyro() {
+  try {
     await gyro.enable();
-    motionPrompt.hidden = true;
-    startExperience();
-  }, { once: true });
-} else {
-  gyro.attach();
-  setTimeout(() => {
-    if (!gyro.available) console.info('Gyroscope unavailable, using touch controls.');
-  }, 1000);
-  startOverlay.hidden = false;
-  startOverlay.addEventListener('click', startExperience, { once: true });
+  } catch (e) {
+    console.log('Gyro not available, using touch controls');
+  }
 }
 
+// Auto-start experience
 async function startExperience() {
-  startOverlay.hidden = true;
   timelineScrubber.showLoading();
   await controller.loadChapter(0);
   timelineScrubber.hideLoading();
   await controller.playCurrent();
   controller.loadChapter(1, true).catch(() => {});
 }
+
+// Enable gyro immediately, then start experience
+enableGyro().then(startExperience);
 
 const clock = new THREE.Clock();
 
