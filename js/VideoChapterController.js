@@ -71,8 +71,10 @@ export class VideoChapterController {
   async playCurrent() {
     try {
       await this.activeSphere.play();
+      return true;
     } catch (e) {
       console.log('Autoplay blocked, waiting for user interaction');
+      return false;
     }
   }
 

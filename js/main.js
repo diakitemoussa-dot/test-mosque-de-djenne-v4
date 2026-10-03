@@ -4,7 +4,6 @@ import { GyroControls } from './GyroControls.js';
 import { TouchControls } from './TouchControls.js';
 import { HotspotSystem } from './HotspotSystem.js';
 import { VideoChapterController } from './VideoChapterController.js';
-import { TimelineScrubber } from './TimelineScrubber.js';
 import { HotspotTimeline } from './HotspotTimeline.js';
 import { CHAPTERS } from './chapters.js';
 
@@ -85,8 +84,27 @@ async function startExperience() {
   showLoading();
   await controller.loadChapter(0);
   hideLoading();
-  await controller.playCurrent();
+  const played = await controller.playCurrent();
+  if (!played) {
+    // Autoplay blocked - show tap to play overlay
+    showTapToPlay();
+  }
   controller.loadChapter(1, true).catch(() => {});
+}
+
+function showTapToPlay() {
+  const overlay = document.createElement('div');
+  overlay.id = 'tapToPlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;color:white;font-family:system-ui;gap:16px;';
+  overlay.innerHTML = `
+    <svg width="80" height="80" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="#ffd700"/></svg>
+    <h1 style="margin:0;font-size:24px;">Toucher pour lire</h1>
+  `;
+  overlay.addEventListener('click', async () => {
+    overlay.remove();
+    await controller.playCurrent();
+  }, { once: true });
+  document.body.appendChild(overlay);
 }
 
 // Enable gyro immediately, then start experience
