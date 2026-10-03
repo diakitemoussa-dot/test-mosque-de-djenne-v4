@@ -107,7 +107,9 @@ if (needsPermission) {
 
 async function startExperience() {
   startOverlay.hidden = true;
+  timelineScrubber.showLoading();
   await controller.loadChapter(0);
+  timelineScrubber.hideLoading();
   await controller.playCurrent();
   controller.loadChapter(1, true).catch(() => {});
 }
