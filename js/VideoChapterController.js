@@ -93,6 +93,9 @@ export class VideoChapterController {
   _onTimeUpdate(time) {
     this.timelineScrubber.update(time, this.duration);
     this.hotspotTimeline?.update?.(time);
+    if (window.updatePlayPauseProgress) {
+      window.updatePlayPauseProgress(time, this.duration);
+    }
   }
 
   _onChapterEnd() {
@@ -162,6 +165,11 @@ export class VideoChapterController {
     this.hotspotTimeline?.setHotspots?.([]);
     this.hotspotSystem?.setForNode?.({ hotspots: [], heading0: 0, position: [0, 0, 0] });
     this.onChapterChange?.(nextChapter, nextIndex);
+    
+    // Update play/pause button chapter badge
+    if (window.setPlayPauseChapter) {
+      window.setPlayPauseChapter(nextChapter.name, nextIndex, this.chapters.length);
+    }
 
     const followingIndex = nextIndex + 1;
     if (followingIndex < this.chapters.length) {

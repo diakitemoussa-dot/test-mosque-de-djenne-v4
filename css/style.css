@@ -75,49 +75,184 @@ html, body {
 
 .play-pause-btn {
   position: fixed;
-  bottom: 24px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
-  width: 72px;
-  height: 72px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  background: rgba(11, 15, 20, 0.85);
-  border: 2px solid var(--accent);
-  color: var(--accent);
+  background: linear-gradient(135deg, rgba(18, 22, 30, 0.9), rgba(11, 15, 20, 0.85));
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  color: #ffd700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 30;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 215, 0, 0.1) inset,
+    0 2px 8px rgba(0, 0, 0, 0.3) inset;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: visible;
 }
 
 .play-pause-btn:hover {
-  background: rgba(11, 15, 20, 0.95);
-  border-color: var(--accent-dim);
+  background: linear-gradient(135deg, rgba(25, 30, 40, 0.95), rgba(15, 18, 25, 0.9));
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 215, 0, 0.2) inset,
+    0 0 24px rgba(255, 215, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.3) inset;
+  transform: translateX(-50%) scale(1.04);
 }
 
 .play-pause-btn:active {
-  transform: translateX(-50%) scale(0.92);
+  transform: translateX(-50%) scale(0.94);
+  transition: transform 0.1s;
 }
 
+.play-pause-btn:focus-visible {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 
+    0 0 0 3px rgba(255, 215, 0, 0.4),
+    0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.play-pause-btn .progress-ring {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+  transform: rotate(-90deg);
+}
+
+.play-pause-btn .progress-bg {
+  transition: opacity 0.3s;
+}
+
+.play-pause-btn .progress-fill {
+  transition: stroke-dashoffset 0.3s linear, opacity 0.3s;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+}
+
+.play-pause-btn .btn-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 215, 0, 0.1) inset;
+  transition: all 0.2s ease;
+}
+
+.play-pause-btn:hover .btn-inner {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 215, 0, 0.1));
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 
+    0 4px 16px rgba(255, 215, 0, 0.2),
+    0 0 0 1px rgba(255, 215, 0, 0.15) inset;
+}
+
+.play-pause-btn .btn-inner svg {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.play-pause-btn .play-icon,
 .play-pause-btn .pause-icon {
-  display: none;
+  position: absolute;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.play-pause-btn:not(.playing) .play-icon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.play-pause-btn:not(.playing) .pause-icon {
+  opacity: 0;
+  transform: scale(0.7) rotate(-90deg);
 }
 
 .play-pause-btn.playing .play-icon {
-  display: none;
+  opacity: 0;
+  transform: scale(0.7) rotate(90deg);
 }
 
 .play-pause-btn.playing .pause-icon {
-  display: block;
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
 }
 
-.play-pause-btn svg {
+.play-pause-btn .loading-spinner {
+  position: absolute;
   width: 32px;
   height: 32px;
+  border: 2.5px solid rgba(255, 215, 0, 0.2);
+  border-top-color: #ffd700;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.play-pause-btn.loading .play-icon,
+.play-pause-btn.loading .pause-icon {
+  opacity: 0;
+}
+
+.play-pause-btn.loading .loading-spinner {
+  opacity: 1;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.play-pause-btn .chapter-badge {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #ffd700;
+  background: rgba(11, 15, 20, 0.9);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.play-pause-btn:hover .chapter-badge {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.play-pause-btn:focus-visible .chapter-badge {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .brand {

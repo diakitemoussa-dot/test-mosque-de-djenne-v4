@@ -44,6 +44,9 @@ const controller = new VideoChapterController({
   },
   onLoadingChange: (loading) => {
     if (loading) showLoading(); else hideLoading();
+    if (window.setPlayPauseLoading) {
+      window.setPlayPauseLoading(loading);
+    }
   }
 });
 
@@ -52,14 +55,43 @@ document.getElementById('recenterBtn').addEventListener('click', () => rig.recen
 
 // Play/Pause button
 const playPauseBtn = document.getElementById('playPauseBtn');
+const progressFill = playPauseBtn.querySelector('.progress-fill');
+const progressBg = playPauseBtn.querySelector('.progress-bg');
+const chapterBadge = playPauseBtn.querySelector('.chapter-badge');
+const CIRCUMFERENCE = 2 * Math.PI * 45; // 282.7
+
+function updateProgress(currentTime, duration) {
+  if (!duration || duration <= 0) return;
+  const progress = Math.min(1, currentTime / duration);
+  const offset = CIRCUMFERENCE * (1 - progress);
+  progressFill.style.strokeDashoffset = offset;
+}
+
+function setChapterBadge(chapterName, index, total) {
+  chapterBadge.textContent = `${chapterName} · ${index + 1}/${total}`;
+}
+
+function setLoading(isLoading) {
+  playPauseBtn.classList.toggle('loading', isLoading);
+  if (isLoading) {
+    playPauseBtn.classList.remove('playing');
+  }
+}
+
 playPauseBtn.addEventListener('click', async () => {
   const isPlaying = playPauseBtn.classList.toggle('playing');
+  playPauseBtn.setAttribute('aria-pressed', isPlaying);
   if (isPlaying) {
     await controller.playCurrent();
   } else {
     controller.activeSphere?.pause();
   }
 });
+
+// Expose for controller
+window.updatePlayPauseProgress = updateProgress;
+window.setPlayPauseChapter = setChapterBadge;
+window.setPlayPauseLoading = setLoading;
 
 // Auto-enable gyro on all devices
 async function enableGyro() {
@@ -75,6 +107,9 @@ async function startExperience() {
   showLoading();
   await controller.loadChapter(0);
   hideLoading();
+  if (window.setPlayPauseChapter) {
+    window.setPlayPauseChapter(CHAPTERS[0].name, 0, CHAPTERS.length);
+  }
   const played = await controller.playCurrent();
   if (!played) {
     showTapToPlay();
