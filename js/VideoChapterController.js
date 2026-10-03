@@ -95,6 +95,13 @@ export class VideoChapterController {
 
   _onChapterEnd() {
     if (this.isTransitioning) return;
+    
+    // Ignore ended if video never really played (iOS autoplay block, load error)
+    if (this.activeSphere.currentTime < 1) {
+      console.log('Chapter end ignored: video never played (currentTime < 1s)');
+      return;
+    }
+
     this.isTransitioning = true;
     this.timelineScrubber.setEndReached(true);
 
