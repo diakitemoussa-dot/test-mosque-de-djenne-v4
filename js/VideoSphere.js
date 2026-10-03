@@ -8,6 +8,8 @@ export class VideoSphere {
     this.video.playsInline = true;
     this.video.preload = 'auto';
     this.video.crossOrigin = 'anonymous';
+    this.video.style.display = 'none';
+    document.body.appendChild(this.video);
 
     this.texture = new THREE.VideoTexture(this.video);
     this.texture.colorSpace = THREE.SRGBColorSpace;
@@ -84,7 +86,13 @@ export class VideoSphere {
   }
 
   play() {
-    return this.video.play();
+    const promise = this.video.play();
+    if (promise) {
+      promise.catch((e) => {
+        console.warn('Video play failed:', e.name, e.message);
+      });
+    }
+    return promise;
   }
 
   pause() {
@@ -136,6 +144,7 @@ export class VideoSphere {
     this.video.removeEventListener('error', this._boundOnError);
     this.video.src = '';
     this.video.load();
+    this.video.remove();
     this.texture.dispose();
     this.material.dispose();
     this.mesh.geometry.dispose();
