@@ -2,9 +2,7 @@ import * as THREE from 'three';
 import { CameraRig } from './CameraRig.js';
 import { GyroControls } from './GyroControls.js';
 import { TouchControls } from './TouchControls.js';
-import { HotspotSystem } from './HotspotSystem.js';
 import { VideoChapterController } from './VideoChapterController.js';
-import { HotspotTimeline } from './HotspotTimeline.js';
 import { CHAPTERS } from './chapters.js';
 
 const app = document.getElementById('app');
@@ -28,23 +26,17 @@ const rig = new CameraRig(camera);
 const gyro = new GyroControls(rig);
 new TouchControls(renderer.domElement, rig);
 
-const hotspotSystem = new HotspotSystem(navLayer, camera, (data) => {
-  controller.goToChapter(data.to);
-});
-
 // Simple loading state (no timeline UI)
 let isLoading = false;
 function showLoading() { isLoading = true; }
 function hideLoading() { isLoading = false; }
 
-const hotspotTimeline = new HotspotTimeline({ layer: hotspotLayer, camera });
-
 const controller = new VideoChapterController({
   scene,
   camera,
   rig,
-  hotspotSystem,
-  hotspotTimeline,
+  hotspotSystem: null,
+  hotspotTimeline: null,
   timelineScrubber: { update: () => {}, setChapter: () => {}, setLoadingProgress: () => {}, showLoading, hideLoading, setEndReached: () => {}, setComplete: () => {} },
   onChapterChange: (chapter, index) => {
     nodeLabel.textContent = chapter.name;
@@ -56,16 +48,6 @@ const controller = new VideoChapterController({
     if (loading) showLoading(); else hideLoading();
   }
 });
-
-const panel = document.getElementById('hotspotPanel');
-window.addEventListener('hotspot:open', (e) => {
-  const data = e.detail;
-  document.getElementById('panelTitle').textContent = data.title;
-  document.getElementById('panelText').textContent = data.text;
-  document.getElementById('panelImage').src = data.image;
-  panel.classList.add('open');
-});
-document.getElementById('panelClose').addEventListener('click', () => panel.classList.remove('open'));
 
 // Recenter button
 document.getElementById('recenterBtn').addEventListener('click', () => rig.recenter());

@@ -55,8 +55,8 @@ export class VideoChapterController {
       this.onLoadingChange?.(false);
       this._setupChapter(chapter);
       this.timelineScrubber.setChapter(chapter, this.chapters);
-      this.hotspotTimeline.setHotspots(chapter.hotspotsTemporal);
-      this.hotspotSystem.setForNode({ hotspots: chapter.hotspotsSpatial, heading0: 0, position: [0, 0, 0] });
+      this.hotspotTimeline?.setHotspots?.([]);
+      this.hotspotSystem?.setForNode?.({ hotspots: [], heading0: 0, position: [0, 0, 0] });
       this.onChapterChange?.(chapter, index);
     }
   }
@@ -92,7 +92,7 @@ export class VideoChapterController {
 
   _onTimeUpdate(time) {
     this.timelineScrubber.update(time, this.duration);
-    this.hotspotTimeline.update(time);
+    this.hotspotTimeline?.update?.(time);
   }
 
   _onChapterEnd() {
@@ -159,8 +159,8 @@ export class VideoChapterController {
     this.activeSphere.play();
     this.timelineScrubber.setChapter(nextChapter, this.chapters);
     this.timelineScrubber.setEndReached(false);
-    this.hotspotTimeline.setHotspots(nextChapter.hotspotsTemporal);
-    this.hotspotSystem.setForNode({ hotspots: nextChapter.hotspotsSpatial, heading0: 0, position: [0, 0, 0] });
+    this.hotspotTimeline?.setHotspots?.([]);
+    this.hotspotSystem?.setForNode?.({ hotspots: [], heading0: 0, position: [0, 0, 0] });
     this.onChapterChange?.(nextChapter, nextIndex);
 
     const followingIndex = nextIndex + 1;
