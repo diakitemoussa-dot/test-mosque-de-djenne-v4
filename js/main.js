@@ -58,6 +58,13 @@ const controller = new VideoChapterController({
   },
   onComplete: () => {
     endScreen.classList.remove('hidden');
+  },
+  onLoadingChange: (isLoading) => {
+    if (isLoading) {
+      timelineScrubber.showLoading();
+    } else {
+      timelineScrubber.hideLoading();
+    }
   }
 });
 

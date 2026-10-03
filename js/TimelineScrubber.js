@@ -15,6 +15,7 @@ export class TimelineScrubber {
   _buildUI() {
     this.container.innerHTML = `
       <div class="timeline-track" role="slider" aria-label="Progression du chapitre" tabindex="0">
+        <div class="timeline-buffer"></div>
         <div class="timeline-fill"></div>
         <div class="timeline-handle" tabindex="-1"></div>
       </div>
@@ -24,14 +25,23 @@ export class TimelineScrubber {
       </div>
       <div class="chapter-indicator">Chapitre 1 / 4</div>
       <div class="end-notice hidden">Fin du chapitre — Suivant dans 3s</div>
+      <div class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">Chargement...</span>
+        <div class="loading-bar"><div class="loading-progress"></div></div>
+      </div>
     `;
     this.track = this.container.querySelector('.timeline-track');
+    this.buffer = this.container.querySelector('.timeline-buffer');
     this.fill = this.container.querySelector('.timeline-fill');
     this.handle = this.container.querySelector('.timeline-handle');
     this.timeCurrent = this.container.querySelector('.time-current');
     this.timeTotal = this.container.querySelector('.time-total');
     this.chapterIndicator = this.container.querySelector('.chapter-indicator');
     this.endNotice = this.container.querySelector('.end-notice');
+    this.loadingOverlay = this.container.querySelector('.loading-overlay');
+    this.loadingProgress = this.container.querySelector('.loading-progress');
+    this.loadingText = this.container.querySelector('.loading-text');
   }
 
   _bindEvents() {
@@ -105,6 +115,8 @@ export class TimelineScrubber {
     this.chapterIndicator.textContent = `Chapitre ${idx + 1} / ${chapters.length}`;
     this.timeTotal.textContent = this._formatTime(this.duration);
     this.update(0, this.duration);
+    this.setLoadingProgress(0);
+    this.hideLoading();
   }
 
   update(currentTime, duration) {
@@ -114,6 +126,25 @@ export class TimelineScrubber {
     this.fill.style.width = `${pct * 100}%`;
     this.handle.style.left = `${pct * 100}%`;
     this.timeCurrent.textContent = this._formatTime(currentTime);
+  }
+
+  setLoadingProgress(percent) {
+    if (percent === null || percent === undefined) {
+      this.buffer.style.width = '0%';
+      return;
+    }
+    const pct = Math.max(0, Math.min(1, percent));
+    this.buffer.style.width = `${pct * 100}%`;
+    this.loadingProgress.style.width = `${pct * 100}%`;
+    this.loadingText.textContent = `Chargement... ${Math.round(pct * 100)}%`;
+  }
+
+  showLoading() {
+    this.loadingOverlay.classList.remove('hidden');
+  }
+
+  hideLoading() {
+    this.loadingOverlay.classList.add('hidden');
   }
 
   seek(time) {

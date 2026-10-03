@@ -6,7 +6,7 @@ const TRANSITION_MS = 2400;
 const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 export class VideoChapterController {
-  constructor({ scene, camera, rig, hotspotSystem, hotspotTimeline, timelineScrubber, onChapterChange, onComplete }) {
+  constructor({ scene, camera, rig, hotspotSystem, hotspotTimeline, timelineScrubber, onChapterChange, onComplete, onLoadingChange }) {
     this.scene = scene;
     this.camera = camera;
     this.rig = rig;
@@ -15,6 +15,7 @@ export class VideoChapterController {
     this.timelineScrubber = timelineScrubber;
     this.onChapterChange = onChapterChange;
     this.onComplete = onComplete;
+    this.onLoadingChange = onLoadingChange;
 
     this.chapters = CHAPTERS;
     this.currentIndex = 0;
@@ -40,9 +41,18 @@ export class VideoChapterController {
     const sphere = isNext ? this.nextSphere : this.activeSphere;
     sphere.fallbackDuration = chapter.duration;
 
+    if (!isNext) {
+      this.onLoadingChange?.(true);
+      sphere.onProgress((percent, buffered) => {
+        this.timelineScrubber.setLoadingProgress(percent);
+      });
+    }
+
     await sphere.load(chapter.video);
 
     if (!isNext) {
+      sphere.onProgress(null);
+      this.onLoadingChange?.(false);
       this._setupChapter(chapter);
       this.timelineScrubber.setChapter(chapter, this.chapters);
       this.hotspotTimeline.setHotspots(chapter.hotspotsTemporal);
@@ -124,6 +134,18 @@ export class VideoChapterController {
     this.currentIndex = nextIndex;
     this.isTransitioning = false;
 
+    // If next sphere not ready, show loading
+    if (this.activeSphere.video.readyState < 3) { // HAVE_FUTURE_DATA
+      this.onLoadingChange?.(true);
+      this.activeSphere.onProgress((percent) => {
+        this.timelineScrubber.setLoadingProgress(percent);
+      });
+      this.activeSphere.video.addEventListener('canplay', () => {
+        this.activeSphere.onProgress(null);
+        this.onLoadingChange?.(false);
+      }, { once: true });
+    }
+
     this._setupChapter(nextChapter);
     this.activeSphere.play();
     this.timelineScrubber.setChapter(nextChapter, this.chapters);
@@ -142,6 +164,7 @@ export class VideoChapterController {
     if (this.isTransitioning || targetIndex === this.currentIndex) return;
     this.isTransitioning = true;
     this.activeSphere.pause();
+    this.onLoadingChange?.(true);
     await this._transitionTo(targetIndex);
   }
 
