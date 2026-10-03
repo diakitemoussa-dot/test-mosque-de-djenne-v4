@@ -186,6 +186,53 @@ html, body {
 .icon-btn:active { transform: scale(0.95); }
 .icon-btn svg { width: 24px; height: 24px; }
 
+.play-pause-btn {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(11, 15, 20, 0.85);
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.play-pause-btn:hover {
+  background: rgba(11, 15, 20, 0.95);
+  border-color: var(--accent-dim);
+}
+
+.play-pause-btn:active {
+  transform: translate(-50%, -50%) scale(0.92);
+}
+
+.play-pause-btn .pause-icon {
+  display: none;
+}
+
+.play-pause-btn.playing .play-icon {
+  display: none;
+}
+
+.play-pause-btn.playing .pause-icon {
+  display: block;
+}
+
+.play-pause-btn svg {
+  width: 32px;
+  height: 32px;
+}
+
 .brand {
   flex: 1;
   text-align: center;

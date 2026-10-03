@@ -70,6 +70,17 @@ document.getElementById('panelClose').addEventListener('click', () => panel.clas
 // Recenter button
 document.getElementById('recenterBtn').addEventListener('click', () => rig.recenter());
 
+// Play/Pause button
+const playPauseBtn = document.getElementById('playPauseBtn');
+playPauseBtn.addEventListener('click', async () => {
+  const isPlaying = playPauseBtn.classList.toggle('playing');
+  if (isPlaying) {
+    await controller.playCurrent();
+  } else {
+    controller.activeSphere?.pause();
+  }
+});
+
 // Auto-enable gyro on all devices
 async function enableGyro() {
   try {
