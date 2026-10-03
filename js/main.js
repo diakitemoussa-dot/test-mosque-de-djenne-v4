@@ -56,15 +56,12 @@ document.getElementById('recenterBtn').addEventListener('click', () => rig.recen
 // Play/Pause button
 const playPauseBtn = document.getElementById('playPauseBtn');
 const progressFill = playPauseBtn.querySelector('.progress-fill');
-const progressBg = playPauseBtn.querySelector('.progress-bg');
 const chapterBadge = playPauseBtn.querySelector('.chapter-badge');
-const CIRCUMFERENCE = 2 * Math.PI * 45; // 282.7
 
 function updateProgress(currentTime, duration) {
   if (!duration || duration <= 0) return;
   const progress = Math.min(1, currentTime / duration);
-  const offset = CIRCUMFERENCE * (1 - progress);
-  progressFill.style.strokeDashoffset = offset;
+  progressFill.style.width = `${progress * 100}%`;
 }
 
 function setChapterBadge(chapterName, index, total) {
