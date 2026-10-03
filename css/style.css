@@ -188,11 +188,11 @@ html, body {
 
 .play-pause-btn {
   position: fixed;
-  top: 50%;
+  bottom: 24px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: rgba(11, 15, 20, 0.85);
   border: 2px solid var(--accent);
@@ -213,7 +213,7 @@ html, body {
 }
 
 .play-pause-btn:active {
-  transform: translate(-50%, -50%) scale(0.92);
+  transform: translateX(-50%) scale(0.92);
 }
 
 .play-pause-btn .pause-icon {
