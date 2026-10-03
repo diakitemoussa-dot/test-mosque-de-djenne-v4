@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0b0f14" />
+  <title>Mosquée de Djenné — Visite Immersive 360°</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/build/three.module.js",
+        "three/addons/": "./vendor/three/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="hotspotLayer"></div>
+  <div id="navLayer"></div>
+
+  <div id="timelineContainer"></div>
+
+  <header id="topbar">
+    <button class="icon-btn" id="recenterBtn" aria-label="Recentrer">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" fill="currentColor"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Recentrer</span>
+    </button>
+    <div class="brand">
+      <span class="brand-title">MOSQUÉE DE DJENNÉ</span>
+      <span class="brand-sub" id="nodeLabel">Chapitre 1</span>
+    </div>
+  </header>
+
+  <div id="bottombar">
+    <button class="pill-btn" id="soundBtn" aria-label="Son">
+      <svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path class="wave" d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>Son</span>
+    </button>
+  </div>
+
+  <section id="hotspotPanel" class="panel" aria-hidden="true">
+    <button class="close-x" id="panelClose" aria-label="Fermer">&times;</button>
+    <img id="panelImage" alt="" />
+    <div class="panel-body">
+      <h2 id="panelTitle"></h2>
+      <p id="panelText"></p>
+    </div>
+  </section>
+
+  <button id="motionPrompt" hidden>
+    <svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 5.4v.2M9.5 9a3.5 3.5 0 015 0M7.5 6.8a6.5 6.5 0 019 0" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <span>Appuyez pour activer les capteurs de mouvement</span>
+  </button>
+
+  <div id="startOverlay" class="hidden">
+    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21" fill="currentColor"/></svg>
+    <h1>Toucher pour commencer</h1>
+    <p>La lecture vidéo nécessite une interaction utilisateur</p>
+  </div>
+
+  <section id="endScreen" class="panel hidden">
+    <h2>Expérience terminée</h2>
+    <p>Merci d'avoir visité la Mosquée de Djenné.</p>
+    <button id="restartBtn" class="pill-btn primary">Recommencer</button>
+  </section>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
