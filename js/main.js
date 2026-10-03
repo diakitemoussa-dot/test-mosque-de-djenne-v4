@@ -6,8 +6,6 @@ import { VideoChapterController } from './VideoChapterController.js';
 import { CHAPTERS } from './chapters.js';
 
 const app = document.getElementById('app');
-const hotspotLayer = document.getElementById('hotspotLayer');
-const navLayer = document.getElementById('navLayer');
 const nodeLabel = document.getElementById('nodeLabel');
 
 const renderer = new THREE.WebGLRenderer({
@@ -79,7 +77,6 @@ async function startExperience() {
   hideLoading();
   const played = await controller.playCurrent();
   if (!played) {
-    // Autoplay blocked - show tap to play overlay
     showTapToPlay();
   }
   controller.loadChapter(1, true).catch(() => {});
