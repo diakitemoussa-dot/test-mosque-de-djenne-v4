@@ -58,9 +58,7 @@ const soundBtn = document.getElementById('soundBtn');
 soundBtn.addEventListener('click', () => {
   const isMuted = soundBtn.classList.toggle('muted');
   soundBtn.setAttribute('aria-pressed', !isMuted);
-  // Apply to both video spheres
-  controller.sphereA?.setMuted(isMuted);
-  controller.sphereB?.setMuted(isMuted);
+  controller.setMuted(isMuted);
 });
 
 // Play/Pause button

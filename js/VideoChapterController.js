@@ -210,4 +210,14 @@ export class VideoChapterController {
     this.sphereA.dispose();
     this.sphereB.dispose();
   }
+
+  // Public method to control mute on both spheres
+  setMuted(muted) {
+    this.sphereA.setMuted(muted);
+    this.sphereB.setMuted(muted);
+  }
+
+  get isMuted() {
+    return this.sphereA.isMuted;
+  }
 }
