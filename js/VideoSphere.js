@@ -4,7 +4,7 @@ export class VideoSphere {
   constructor(scene) {
     this.scene = scene;
     this.video = document.createElement('video');
-    this.video.muted = true;
+    this.video.muted = false;
     this.video.playsInline = true;
     this.video.preload = 'auto';
     this.video.crossOrigin = 'anonymous';
@@ -101,6 +101,14 @@ export class VideoSphere {
 
   seek(time) {
     this.video.currentTime = time;
+  }
+
+  setMuted(muted) {
+    this.video.muted = muted;
+  }
+
+  get isMuted() {
+    return this.video.muted;
   }
 
   setOpacity(opacity) {

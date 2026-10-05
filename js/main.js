@@ -53,6 +53,16 @@ const controller = new VideoChapterController({
 // Recenter button
 document.getElementById('recenterBtn').addEventListener('click', () => rig.recenter());
 
+// Sound button
+const soundBtn = document.getElementById('soundBtn');
+soundBtn.addEventListener('click', () => {
+  const isMuted = soundBtn.classList.toggle('muted');
+  soundBtn.setAttribute('aria-pressed', !isMuted);
+  // Apply to both video spheres
+  controller.sphereA?.setMuted(isMuted);
+  controller.sphereB?.setMuted(isMuted);
+});
+
 // Play/Pause button
 const playPauseBtn = document.getElementById('playPauseBtn');
 const progressFill = playPauseBtn.querySelector('.progress-fill');

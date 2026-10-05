@@ -73,6 +73,10 @@ html, body {
 .icon-btn:active { transform: scale(0.95); }
 .icon-btn svg { width: 24px; height: 24px; }
 
+.icon-btn .sound-off { display: none; }
+.icon-btn.muted .sound-on { display: none; }
+.icon-btn.muted .sound-off { display: block; }
+
 .play-pause-btn {
   position: fixed;
   bottom: 28px;
