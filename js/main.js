@@ -78,10 +78,16 @@ function setChapterBadge(chapterName, index, total) {
   chapterBadge.textContent = `${chapterName} · ${index + 1}/${total}`;
 }
 
+let wasPlayingBeforeLoading = false;
+
 function setLoading(isLoading) {
   playPauseBtn.classList.toggle('loading', isLoading);
   if (isLoading) {
+    wasPlayingBeforeLoading = playPauseBtn.classList.contains('playing');
     playPauseBtn.classList.remove('playing');
+  } else if (wasPlayingBeforeLoading) {
+    playPauseBtn.classList.add('playing');
+    playPauseBtn.setAttribute('aria-pressed', 'true');
   }
 }
 
@@ -94,6 +100,14 @@ playPauseBtn.addEventListener('click', async () => {
     controller.activeSphere?.pause();
   }
 });
+
+function setPlayingState(isPlaying) {
+  playPauseBtn.classList.toggle('playing', isPlaying);
+  playPauseBtn.setAttribute('aria-pressed', isPlaying);
+}
+
+// Expose for controller
+window.setPlayPausePlaying = setPlayingState;
 
 // Expose for controller
 window.updatePlayPauseProgress = updateProgress;
@@ -118,7 +132,9 @@ async function startExperience() {
     window.setPlayPauseChapter(CHAPTERS[0].name, 0, CHAPTERS.length);
   }
   const played = await controller.playCurrent();
-  if (!played) {
+  if (played) {
+    setPlayingState(true);
+  } else {
     showTapToPlay();
   }
   controller.loadChapter(1, true).catch(() => {});
@@ -134,7 +150,8 @@ function showTapToPlay() {
   `;
   overlay.addEventListener('click', async () => {
     overlay.remove();
-    await controller.playCurrent();
+    const played = await controller.playCurrent();
+    if (played) setPlayingState(true);
   }, { once: true });
   document.body.appendChild(overlay);
 }

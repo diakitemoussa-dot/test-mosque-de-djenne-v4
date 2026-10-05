@@ -107,6 +107,10 @@ export class VideoChapterController {
       return;
     }
 
+    if (window.setPlayPausePlaying) {
+      window.setPlayPausePlaying(false);
+    }
+
     this.isTransitioning = true;
     this.timelineScrubber.setEndReached(true);
 
@@ -155,7 +159,15 @@ export class VideoChapterController {
       this.activeSphere.video.addEventListener('canplay', () => {
         this.activeSphere.onProgress(null);
         this.onLoadingChange?.(false);
+        if (window.setPlayPausePlaying) {
+          window.setPlayPausePlaying(true);
+        }
       }, { once: true });
+    } else {
+      // Video ready, set playing state
+      if (window.setPlayPausePlaying) {
+        window.setPlayPausePlaying(true);
+      }
     }
 
     this._setupChapter(nextChapter);
@@ -181,6 +193,9 @@ export class VideoChapterController {
     if (this.isTransitioning || targetIndex === this.currentIndex) return;
     this.isTransitioning = true;
     this.activeSphere.pause();
+    if (window.setPlayPausePlaying) {
+      window.setPlayPausePlaying(false);
+    }
     this.onLoadingChange?.(true);
     await this._transitionTo(targetIndex);
   }
